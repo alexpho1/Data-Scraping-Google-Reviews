@@ -8,9 +8,10 @@ import time
 from bs4 import BeautifulSoup
 import pandas as pd
 
-
+#Inititalizes driver object to siimulate chrom browsing
 driver = webdriver.Chrome()
 
+#Opens the review link and sorts the reviews to the latest
 url = 'https://www.google.com/maps/place/E-Gyu+Revolving+Sushi+%26+Korean+BBQ/@33.9137463,-84.2635713,17z/data=!4m8!3m7!1s0x88f5a78015986f1b:0xa31fb6f1de20ec6b!8m2!3d33.9137463!4d-84.2613826!9m1!1b1!16s%2Fg%2F11fphnvz8m'
 driver.get(url)
 wait = WebDriverWait(driver, 10)
@@ -23,7 +24,7 @@ recent_rating_bt = driver.find_element(By.XPATH,"//*[@id=\"action-menu\"]/div[2]
 recent_rating_bt.click()
 time.sleep(3)
 
-
+#Simulates scrolling down to load all the reviews and extracts the review body containers
 for i in range(900):
             ActionChains(driver).key_down(Keys.ARROW_DOWN).perform()
 
@@ -32,9 +33,12 @@ time.sleep(2)
 review_elements = response.find_all('div', class_='jftiEf')
 # Wait for page to load after scrolling
 time.sleep(2)
+
+#Dictionary to hold all review elements
 reviews_dict = {'name': [], 'rating': [], 'date': [], 'review': []}
 review_counter = 0
 
+#Extracts all elements needed for scraping and stores them into dictionary
 for review in review_elements:
     name_element = review.find('div', 'd4r55')
     rating_element = review.find('span', "kvMYJc")
@@ -50,7 +54,7 @@ for review in review_elements:
     reviews_dict['rating'].append(rating)
     reviews_dict['date'].append(date)
     reviews_dict['review'].append(review_text)
-
+    
     review_counter += 1
     if review_counter == 50:
         break
